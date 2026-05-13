@@ -20,5 +20,12 @@ umbral = graythresh(IMabc_gris);
 %mas cercano a 1) si no lo negro (lo mas cercano a 0), es por eso que
 %usamos ~ para invertir la imagen. De esta forma las letras son 1 y el
 %fondo 0, no al revés
-IMabc_binaria = ~(IMabc_gris > umbral); 
+
+IM_temp = IMabc_gris > umbral;
+
+if sum(IM_temp(:)) > (numel(IM_temp) / 2)
+    IMabc_binaria = ~IM_temp;
+else
+    IMabc_binaria = IM_temp; % El fondo ya era negro
+end
 end

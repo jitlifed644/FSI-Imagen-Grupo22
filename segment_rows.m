@@ -1,4 +1,4 @@
-function filas_cell = segment_rows(Im_bin)
+function [filas_cell, debug_info] = segment_rows(Im_bin)
     % 1. CREAR IMAGEN AUXILIAR DILATADA (Para conectar tildes y puntos)
     % Usamos un rectángulo vertical de 5x1 para cerrar el hueco de la ñ
     se_vertical = strel('rectangle', [5, 1]); 
@@ -20,9 +20,14 @@ function filas_cell = segment_rows(Im_bin)
         y1 = max(1, filas_inicio(i) - 1); 
         y2 = min(size(Im_bin, 1), filas_fin(i) + 1);
         
-        % OJO: Recortamos todas las columnas (:) pero solo las filas que tocan
         filas_cell{i} = Im_bin(y1:y2, :);
     end
+
+    % Usamos el debug_info como si fuera un struct para poder acceder a los
+    % datos necesarios para la memoria desde el script
+    debug_info.dilatada = Im_dilatada;
+    debug_info.proyeccion = v_media_filas;
+    debug_info.umbral = umbral_fila;
 
     % % Recorte con margen de 1 píxel (usando la imagen ORIGINAL limpia)
     % y1 = max(1, filas_inicio(1) - 1); 

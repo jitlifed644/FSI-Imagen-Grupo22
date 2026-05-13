@@ -1,0 +1,70 @@
+function [filas_cell, debug_info] = segment_rows(Im_bin)
+    % 1. CREAR IMAGEN AUXILIAR DILATADA (Para conectar tildes y puntos)
+    % Usamos un rectángulo vertical de 5x1 para cerrar el hueco de la ñ
+    se_vertical = strel('rectangle', [5, 1]); 
+    Im_dilatada = imdilate(Im_bin, se_vertical);
+
+    % 2. PROYECCIÓN PARA FILAS (Detección sobre la dilatada)
+    v_media_filas = mean(Im_dilatada, 2);
+    umbral_fila = 0.05 * max(v_media_filas);
+    v_filas_buenas = v_media_filas > umbral_fila;
+    
+    cambios_filas = diff([0; v_filas_buenas; 0]);
+    filas_inicio = find(cambios_filas == 1); 
+    filas_fin = find(cambios_filas == -1) - 1;
+
+    num_filas = length(filas_inicio);
+    filas_cell = cell(1, num_filas);
+
+    for i = 1:num_filas
+        y1 = max(1, filas_inicio(i) - 1); 
+        y2 = min(size(Im_bin, 1), filas_fin(i) + 1);
+        
+        filas_cell{i} = Im_bin(y1:y2, :);
+    end
+
+    % Usamos el deb
+    debug_info.dilatada = Im_dilatada;
+    debug_info
+
+    % % Recorte con margen de 1 píxel (usando la imagen ORIGINAL limpia)
+    % y1 = max(1, filas_inicio(1) - 1); 
+    % y2 = min(size(Im_bin, 1), filas_fin(end) + 1);
+    % Im_horizontal = Im_bin(y1:y2, :);
+    % 
+    % 
+    % % 3. PROYECCIÓN PARA COLUMNAS (Letras)
+    % % Dilatamos también horizontalmente un poco para asegurar que las letras son bloques
+    % Im_horiz_dilatada = imdilate(Im_horizontal, strel('disk', 1));
+    % v_media_columnas = mean(Im_horiz_dilatada, 1);
+    % 
+    % umbral_columna = 0.05 * max(v_media_columnas);
+    % v_columnas_buenas = v_media_columnas > umbral_columna;
+    % 
+    % cambios_columnas = diff([0, v_columnas_buenas, 0]);
+    % letras_inicio = find(cambios_columnas == 1);
+    % letras_fin = find(cambios_columnas == -1) - 1;
+    % 
+    % % 4. EXTRACCIÓN DE CARACTERES
+    % num_letras = length(letras_inicio);
+    % caracteres = cell(1, num_letras); 
+    % 
+    % for i = 1:num_letras
+    %     x1 = max(1, letras_inicio(i) - 1); 
+    %     x2 = min(size(Im_horizontal, 2), letras_fin(i) + 1);
+    %     caracteres{i} = Im_horizontal(:, x1:x2); 
+    % end
+    % 
+    % % --- VISUALIZACIÓN EN CUADRÍCULA ---
+    % figure('Name', 'Segmentación de Caracteres');
+    % 
+    % % Decidimos el número de columnas de la cuadrícula (ej. 8 letras por fila)
+    % cols_grid = 8; 
+    % filas_grid = ceil(num_letras / cols_grid);
+    % 
+    % for i = 1:num_letras
+    %     subplot(filas_grid, cols_grid, i);
+    %     imshow(caracteres{i});
+    %     title(['#', num2str(i)]);
+    % end
+end
