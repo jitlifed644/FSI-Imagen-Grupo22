@@ -19,7 +19,7 @@ function [chars_cell, debug_info] = segment_characters(row)
     fin_corregido = [];
 
     for i = 1: length(letras_inicio)
-        if anchos(i) > 1.5*ancho_medio
+        if (anchos(i) > 1.5*ancho_medio)
             caracter_seccionado = v_media_columnas(letras_inicio(i):letras_fin(i));
             [~, indice_minimo_local] = min(caracter_seccionado);
 

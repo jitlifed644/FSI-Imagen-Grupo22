@@ -41,3 +41,21 @@ for i = 1 : length(filas_texto)
     exportgraphics(f_cols, nombre_archivo, 'Resolution', 300);
 end
 
+% Cogemos la Fila 5 (donde está POST MOLESTAM SENECTUTEM)
+fila_problematica = filas_texto{5}; 
+
+% Extraemos los caracteres con tu función actualizada
+[letras_extraidas, ~] = segment_characters(fila_problematica);
+
+ta = figure('Name', 'Letras extraídas de la Fila 5');
+num_letras = length(letras_extraidas);
+
+for i = 1:num_letras
+    subplot(2, ceil(num_letras/2), i); % Crea una cuadrícula
+    imshow(letras_extraidas{i});
+    title(sprintf('#%d', i));
+end
+
+exportgraphics(ta, 'imagenes_memoria/extraccion_linea_con_TA.png', 'Resolution', 300);
+
+
