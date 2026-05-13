@@ -1,26 +1,55 @@
 function Im_horizontal = segmentTopAndBot(Im_bin)
-%Calculamos el promedio de cada fila, dejando un vector columna con el
-%promedio de cada fila.
-v_media_filas = mean(Im_bin,2);
+    % 1. CREAR IMAGEN AUXILIAR DILATADA (Para conectar tildes y puntos)
+    % Usamos un rectángulo vertical de 5x1 para cerrar el hueco de la ñ
+    se_vertical = strel('rectangle', [5, 1]); 
+    Im_dilatada = imdilate(Im_bin, se_vertical);
 
-%Ahora haremos un umbral para eliminar ruido o pequeñas variaciones, como?
-%Pues te aseguras de que el umbral sea proporcional a la cantidad de texto que hay
-%Si el pico más alto es 100 píxeles, cualquier fila que promedie menos de 15 se ignora por ser ruido
-umbral = 0.15*max(v_media_filas);
+    % 2. PROYECCIÓN PARA FILAS (Detección sobre la dilatada)
+    v_media_filas = mean(Im_dilatada, 2);
+    umbral_fila = 0.05 * max(v_media_filas);
+    v_filas_buenas = v_media_filas > umbral_fila;
+    
+    cambios_filas = diff([0; v_filas_buenas; 0]);
+    filas_inicio = find(cambios_filas == 1); 
+    filas_fin = find(cambios_filas == -1) - 1;
 
-%Usamos el umbral y dejamos un vector de solo 1 y 0.
-v_filas_buenas = v_media_filas > umbral;
-cambios = diff([0; v_filas_buenas; 0]);
+    % Recorte con margen de 1 píxel (usando la imagen ORIGINAL limpia)
+    y1 = max(1, filas_inicio(1) - 1); 
+    y2 = min(size(Im_bin, 1), filas_fin(end) + 1);
+    Im_horizontal = Im_bin(y1:y2, :);
 
-filas_inicio = find(cambios == 1); 
-y1 = filas_inicio(1); % Cogemos el primer inicio detectado
+    % 3. PROYECCIÓN PARA COLUMNAS (Letras)
+    % Dilatamos también horizontalmente un poco para asegurar que las letras son bloques
+    Im_horiz_dilatada = imdilate(Im_horizontal, strel('disk', 1));
+    v_media_columnas = mean(Im_horiz_dilatada, 1);
+    
+    umbral_columna = 0.05 * max(v_media_columnas);
+    v_columnas_buenas = v_media_columnas > umbral_columna;
+    
+    cambios_columnas = diff([0, v_columnas_buenas, 0]);
+    letras_inicio = find(cambios_columnas == 1);
+    letras_fin = find(cambios_columnas == -1) - 1;
 
-filas_fin = find(cambios == -1) - 1;
-y2 = filas_fin(end); % Cogemos el último final detectado
+    % 4. EXTRACCIÓN DE CARACTERES
+    num_letras = length(letras_inicio);
+    caracteres = cell(1, num_letras); 
+    
+    for i = 1:num_letras
+        x1 = max(1, letras_inicio(i) - 1); 
+        x2 = min(size(Im_horizontal, 2), letras_fin(i) + 1);
+        caracteres{i} = Im_horizontal(:, x1:x2); 
+    end
 
-Im_horizontal = Im_bin(y1:y2,:);
+    % --- VISUALIZACIÓN EN CUADRÍCULA ---
+    figure('Name', 'Segmentación de Caracteres');
+    
+    % Decidimos el número de columnas de la cuadrícula (ej. 8 letras por fila)
+    cols_grid = 8; 
+    filas_grid = ceil(num_letras / cols_grid);
 
-figure; 
-plot(v_filas_buenas); 
-title('Proyección Vertical (Detección de Filas)');
+    for i = 1:num_letras
+        subplot(filas_grid, cols_grid, i);
+        imshow(caracteres{i});
+        title(['#', num2str(i)]);
+    end
 end

@@ -2,13 +2,8 @@ function IMabc_binaria = im2bin(IMabc)
 %Pasamos a double para facilitar calculos (del 0 al 1)
 im_d = im2double(IMabc); 
 
-%Separamos sus tres componentes red, green y blue
-R = im_d(:,:,1);
-G = im_d(:,:,2);
-B = im_d(:,:,3);
-
 %Usando ciertos parámetros hacemos una suma ponderada
-IMabc_gris = 0.30*R + 0.59*G + 0.11*B;
+IMabc_gris = im2gray(im_d);
 
 %La función graythresh utiliza el método de Otsu para encontrar un valor
 %numérico específico (el umbral) que permita separar los píxeles de una 
