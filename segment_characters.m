@@ -38,7 +38,11 @@ function [chars_cell, debug_info] = segment_characters(row)
     for i = 1:num_letras
         x1 = max(1, inicio_corregido(i) - 1); 
         x2 = min(size(row, 2), fin_corregido(i) + 1);
-        chars_cell{i} = row(:, x1:x2); 
+        letras_sucias = row(:, x1:x2); 
+
+        letra_limpia = bwareafilt(letras_sucias, 1);
+        
+        chars_cell{i} = letra_limpia;
     end
 
     debug_info.proyeccion = v_media_columnas;
