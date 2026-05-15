@@ -39,7 +39,7 @@ function [imagenes_filas, caracteres_por_fila] = segmentTopAndBot(Im_bin)
     for i = 1:length(filas_inicio)
         % Si la fila mide al menos un 30% de la altura normal, es texto real.
         % Si es una línea de polvo de 3 píxeles, se descarta.
-        if alturas_filas(i) > 0.3 * altura_media_filas
+        if alturas_filas(i) > 0.25 * altura_media_filas
             filas_inicio_limpias = [filas_inicio_limpias, filas_inicio(i)];
             filas_fin_limpias = [filas_fin_limpias, filas_fin(i)];
         end
@@ -118,7 +118,7 @@ function [imagenes_filas, caracteres_por_fila] = segmentTopAndBot(Im_bin)
                 % Si el bloque es demasiado ancho,
                 % probablemente contiene varias letras unidas.
 
-                if ancho_b > (alto_b * 1.15)
+                if ancho_b > (alto_b * 1.45)
 
                     % =============================================
                     % EROSIÓN
@@ -236,7 +236,7 @@ function [imagenes_filas, caracteres_por_fila] = segmentTopAndBot(Im_bin)
                 altura_fila = size(Im_horizontal, 1);
                 
                 % Si el hueco supera el 35% de la altura de la fila, es un espacio
-                if distancia_siguiente > (0.35 * altura_fila)
+                if distancia_siguiente > (0.325 * altura_fila)
                     
                     % Creamos un bloque negro (fondo) del tamaño de un espacio
                     % false() crea una matriz lógica de 0s.
@@ -253,37 +253,37 @@ function [imagenes_filas, caracteres_por_fila] = segmentTopAndBot(Im_bin)
         % 6. VISUALIZACIÓN
         % =====================================================
 
-        num_letras = length(caracteres);
+        % num_letras = length(caracteres);
 
-        figure('Name', ['Fila ', num2str(k)]);
-
-        % -----------------------------------------------------
-        % FILA DETECTADA
-        % -----------------------------------------------------
-
-        subplot(2, 1, 1);
-
-        imshow(Im_horizontal);
-
-        title(['Fila detectada ', num2str(k)]);
-
-        % -----------------------------------------------------
-        % CARACTERES SEGMENTADOS
-        % -----------------------------------------------------
-
-        subplot(2, 1, 2);
-
-        cols_grid  = 8;
-        filas_grid = ceil(num_letras / cols_grid);
-
-        montage( ...
-            caracteres, ...
-            'Size', [filas_grid cols_grid], ...
-            'BorderSize', [5 5], ...
-            'BackgroundColor', 'white' ...
-        );
-
-        title(['Caracteres detectados - fila ', num2str(k)]);
+        % figure('Name', ['Fila ', num2str(k)]);
+        % 
+        % % -----------------------------------------------------
+        % % FILA DETECTADA
+        % % -----------------------------------------------------
+        % 
+        % subplot(2, 1, 1);
+        % 
+        % imshow(Im_horizontal);
+        % 
+        % title(['Fila detectada ', num2str(k)]);
+        % 
+        % % -----------------------------------------------------
+        % % CARACTERES SEGMENTADOS
+        % % -----------------------------------------------------
+        % 
+        % subplot(2, 1, 2);
+        % 
+        % cols_grid  = 8;
+        % filas_grid = ceil(num_letras / cols_grid);
+        % 
+        % montage( ...
+        %     caracteres, ...
+        %     'Size', [filas_grid cols_grid], ...
+        %     'BorderSize', [5 5], ...
+        %     'BackgroundColor', 'white' ...
+        % );
+        % 
+        % title(['Caracteres detectados - fila ', num2str(k)]);
 
     end
     
