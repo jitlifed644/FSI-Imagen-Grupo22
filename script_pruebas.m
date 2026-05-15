@@ -1,4 +1,4 @@
-IMabc = imread("Prueba.png"); 
+IMabc = imread("Preuba AVA5 .png"); 
 IMabc_Binario = im2bin(IMabc);
 
 % 1. Ejecutas la función y recoges los datos
@@ -18,7 +18,7 @@ xlabel('Filas de la imagen');
 ylabel('Suma de píxeles');
 
 % Exportamos directamente a nuestro directorio
-exportgraphics(f, 'imagenes_memoria/02_proyeccion_filas.png', 'Resolution', 300);
+exportgraphics(f, 'imagenes_memoria/02_proyeccion_filas_2.png', 'Resolution', 300);
 
 %Se hace una sola vez para que sea mas eficiente
 f_cols = figure('Name', 'Proyeccion de columnas', 'Visible','off');
@@ -37,17 +37,17 @@ for i = 1 : length(filas_texto)
     ylabel('Suma de píxeles');
     
     % Usamos sprintf para formatear el nombre del archivo
-    nombre_archivo = sprintf('imagenes_memoria/02_proyeccion_columnas_fila_%d.png', i);
+    nombre_archivo = sprintf('imagenes_memoria/02_proyeccion_columnas_fila_%d_2.png', i);
     exportgraphics(f_cols, nombre_archivo, 'Resolution', 300);
 end
 
 % Cogemos la Fila 5 (donde está POST MOLESTAM SENECTUTEM)
-fila_problematica = filas_texto{5}; 
+fila_problematica = filas_texto{1}; 
 
 % Extraemos los caracteres con tu función actualizada
 [letras_extraidas, ~] = segment_characters(fila_problematica);
 
-ta = figure('Name', 'Letras extraídas de la Fila 5');
+ta = figure('Name', 'Letras extraídas de la Fila 1');
 num_letras = length(letras_extraidas);
 
 for i = 1:num_letras
@@ -56,6 +56,6 @@ for i = 1:num_letras
     title(sprintf('#%d', i));
 end
 
-exportgraphics(ta, 'imagenes_memoria/extraccion_linea_con_TA.png', 'Resolution', 300);
+exportgraphics(ta, 'imagenes_memoria/extraccion_linea_con_AYA_VAVA.png', 'Resolution', 300);
 
 
